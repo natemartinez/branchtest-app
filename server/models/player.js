@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
 const playerSchema = new mongoose.Schema({
-    name: String,
-    password: String
+    username: String,
+    password: String,
+    stats: Object,
+    progress: Object
 })
 
 const PlayerModel = mongoose.model('players', playerSchema);

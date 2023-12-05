@@ -12,12 +12,11 @@ const Signup = () => {
       username,
       password
     };
-    console.log(newUser);
 
     axios.post('http://localhost:3000/signup', newUser)
       .then(response => {
-        console.log('Response:', response.data);
-        setMessage('Signup successful!');
+        console.log(typeof response.data);
+        setMessage(response.data); // receive response
       })
       .catch(error => {
         console.error('Error:', error);

@@ -8,6 +8,7 @@ app.use(express.json());
 
 const uri = 'mongodb+srv://natemartinez:Lj092101@players.m8tq7fu.mongodb.net/info?retryWrites=true&w=majority';
 
+
 async function connect() {
   try {
     await mongoose.connect(uri);
@@ -18,10 +19,38 @@ async function connect() {
 }
 
 app.post('/signup', (req, res) => {
-  const { key1, key2 } = req.body;
-  console.log('Received Data:', key1, key2);
+  const userData = req.body;
+  const newPlayer = new PlayerModel({
+    username: userData.username,
+    password: userData.password
+  });
+
   
-  res.json({ message: 'Data received successfully' });
+  async function fetchData() {
+    try {
+      const results = await PlayerModel.find({ username: newPlayer.username });
+      if (results.length > 0) {
+        res.send('User already exists');
+      } else {
+        console.log('No documents found.');
+        newPlayer.save()
+        .then(updatedDocument => {
+          console.log('Updated Document:', updatedDocument);
+          res.send('Signup Complete!')
+        })
+        .catch(err => {
+          console.error('Error:', err);
+        });
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    };
+
+    
+  };
+  
+  fetchData(); 
+
 });
 
 connect();

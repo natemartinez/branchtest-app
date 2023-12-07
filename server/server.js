@@ -25,8 +25,8 @@ app.post('/signup', (req, res) => {
     password: userData.password
   });
 
-  
-  async function fetchData() {
+  //Function checks if user exists or not
+  async function checkUser() {
     try {
       const results = await PlayerModel.find({ username: newPlayer.username });
       if (results.length > 0) {
@@ -49,7 +49,7 @@ app.post('/signup', (req, res) => {
     
   };
   
-  fetchData(); 
+  checkUser(); 
 
 });
 

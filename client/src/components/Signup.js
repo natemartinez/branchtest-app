@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 
 const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  
+  
 
   function submit(e) {
     e.preventDefault();
@@ -22,7 +26,12 @@ const Signup = () => {
         console.error('Error:', error);
         setMessage('Signup failed!');
       });
+
   }
+
+  const redirect = () => {
+    window.location.href = '/quiz';
+ }
 
   return (
     <div>
@@ -39,7 +48,7 @@ const Signup = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder='Password'
         />
-        <button type="submit">Submit</button>
+        <button onClick={redirect} type="submit">Submit</button>
       </form>
       <div>
         <p>{message}</p>

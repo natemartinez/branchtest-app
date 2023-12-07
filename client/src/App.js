@@ -1,19 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Signup from './Signup';
+import { Routes, Route } from "react-router-dom";
 
+import Signup from './components/Signup';
+import Quiz from './components/Quiz';
 
 
 function App() {
+
   return (
-    <Signup />
-    /*
-    <BrowserRouter>
-      <Router>
-        <Route path='./register' element={<Signup/>}></Route>
-      </Router>
-    </BrowserRouter>
-    */
+    <div>
+      <Routes>
+        <Route path="/" element={<Signup />}></Route> 
+        <Route path="/quiz" element={<Quiz />}></Route> 
+      </Routes>
+    </div>
   );
 }
 

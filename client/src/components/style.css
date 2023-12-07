@@ -1,0 +1,14 @@
+.quiz-div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.option-list{
+    display: flex;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+}   
+.option-btn{
+    width: 10em;
+}

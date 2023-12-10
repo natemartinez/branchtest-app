@@ -22,7 +22,8 @@ app.post('/signup', (req, res) => {
   const userData = req.body;
   const newPlayer = new PlayerModel({
     username: userData.username,
-    password: userData.password
+    password: userData.password,
+    stats: []
   });
 
   //Function checks if user exists or not
@@ -45,14 +46,44 @@ app.post('/signup', (req, res) => {
     } catch (err) {
       console.error('Error:', err);
     };
-
-    
   };
   
   checkUser(); 
 
 });
 
+app.post('/sendUser', async (req, res) => {
+  const username = req.body[0];
+  const results = req.body[1];
+
+  console.log(username, results);
+
+  try {
+    let doc = await PlayerModel.findOne({ username: username.user });
+
+    if (!doc) {
+      doc = new PlayerModel({ username: username.user, stats: results });
+      await doc.save();
+
+      console.log('New document inserted successfully.');
+      res.status(200).json({ message: 'New document inserted successfully' });
+
+    } else {
+      await PlayerModel.updateOne({ username: username.user }, { $set: { stats: results } });
+      console.log('Document updated successfully.');
+      res.status(200).json({ message: 'Document updated successfully' });
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Error updating document' });
+  }
+
+
+
+});
+
+
+ 
 connect();
 
 app.listen(3000, () => {

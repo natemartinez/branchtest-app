@@ -1,8 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-
 import Signup from './components/Signup';
-import Quiz from './components/Quiz';
-
+import Main from './components/Main';
 
 function App() {
 
@@ -10,7 +8,7 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<Signup />}></Route> 
-        <Route path="/quiz" element={<Quiz />}></Route> 
+        <Route path="/main" element={<Main />}></Route>
       </Routes>
     </div>
   );

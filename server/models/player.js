@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const playerSchema = new mongoose.Schema({
     username: String,
     password: String,
-    stats: Object,
+    stats: Array,
     progress: Object
 })
 

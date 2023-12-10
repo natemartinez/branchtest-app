@@ -1,3 +1,7 @@
+body{
+    background-color: antiquewhite;
+}
+
 .quiz-div{
     display: flex;
     flex-direction: column;
@@ -11,4 +15,51 @@
 }   
 .option-btn{
     width: 10em;
+}
+
+
+
+/*Game Screen*/
+
+.main-menu{
+    display: flex;
+    position:fixed;
+    flex-direction: column;
+    bottom:0;
+    left: 0;
+    height: 100%;
+    font-size: 3.5em;
+    justify-content: space-evenly;
+    background-color: black;
+    
+    width: 100%;
+    align-items: center;
+}
+.main-menu a{
+    text-decoration: none;
+    color: antiquewhite;
+}
+
+.open-menu-div{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+}
+.open-menu-btn{
+    background-color: black;
+    color: white;
+    width: 100%;
+    font-size: 2.5em;
+    height: 4em;
+    position: relative;
+}
+
+.close-menu-btn{
+    background-color: black;
+    color: white;
+    width: 100%;
+    font-size: 1em;
+    border: none;
+    position: relative;
 }

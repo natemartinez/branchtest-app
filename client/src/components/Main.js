@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {useLocation} from 'react-router-dom';
 import './style.css';
+import Levels from './logic/Levels';
 
  const HUD = () => {
   // Displays HUD & UI
@@ -45,13 +46,18 @@ import './style.css';
    </div>
    );
  };
- const Game = () => {
- // Controls game logic
- // might make a separate folder 
+ const Game = (username) => {
+ // Controls current game logic
+  async function getLevel(){
+  // use axios.get, if it doesnt work, then
+  }
+
+ // calls function to know what level to display
+
 
  return (
     <div>
-      
+      <Levels currentLevel={1.1}/> 
     </div>
   );
  };
@@ -61,11 +67,11 @@ import './style.css';
     const location = useLocation();
     const currentUser = location.state.username.user;
     const currentStats = location.state.data;
-    
+ 
   return (
     <div>
       <p>Username:{currentUser}</p>
-      <Game/>
+      <Game username={currentUser}/>
       <Menu/>
     </div>
   );

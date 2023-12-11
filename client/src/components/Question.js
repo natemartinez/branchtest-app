@@ -12,6 +12,7 @@ const Question = ({data, answerSelect, nextQuestion}) => {
   const optionSelected = (optionName) => {
     setChosenOption(optionName);
     setAnswerSelected(true);
+
     answerSelect(optionName)
     // Passes the chosen option to the Quiz component
   }
@@ -32,14 +33,14 @@ const Question = ({data, answerSelect, nextQuestion}) => {
       <ul className='option-list'>
         {options.map((option, index) => (
           <li key={index}>
-            <button className='option-btn' onClick={() => optionSelected(option)}>
+            <button className={answerSelected ? 'option-btn-clicked' : 'option-btn'} onClick={() => optionSelected(option)}>
               {option}
             </button>
           </li>
         ))}
       </ul>
       {answerSelected && (
-        <button onClick={moveNextQuestion}>Next</button>
+        <button className='next-btn' onClick={moveNextQuestion}>Next</button>
       )}
     </div>
   );

@@ -26,7 +26,6 @@ app.post('/signup', (req, res) => {
     stats: []
   });
 
-  //Function checks if user exists or not
   async function checkUser() {
     try {
       const results = await PlayerModel.find({ username: newPlayer.username });
@@ -82,7 +81,17 @@ app.post('/sendUser', async (req, res) => {
 
 });
 
+/* MUST ADD SAVE AND LOAD FUNCTIONS SOON
+app.post('/checkUser', async (req, res) => {
+  console.log(req.body);
+  let doc = req.body.username;
+   PlayerModel.find({progress: {$exists: true}}, function(err, docs){
+   });
+  } 
+  
+);
 
+*/
  
 connect();
 

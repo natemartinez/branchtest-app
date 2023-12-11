@@ -4,7 +4,7 @@ const playerSchema = new mongoose.Schema({
     username: String,
     password: String,
     stats: Array,
-    progress: Object
+    progress: Number
 })
 
 const PlayerModel = mongoose.model('players', playerSchema);

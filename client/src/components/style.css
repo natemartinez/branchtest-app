@@ -1,11 +1,122 @@
 body{
     background-color: antiquewhite;
+    font-family: 'Red Hat Display';
+    font-weight: 300;
 }
 
+/*Register & Login Form*/
+.form-logo-div{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.form-logo{
+    width: 20em;
+}
+.logo-div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgb(86, 64, 54);
+    font-size: 1.5em;
+}
+.logo{
+    width: 20em;
+}
+
+.form-btn-div{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+}
+.form-btn{
+    width: 7em;
+    height: 2.5em;
+    margin: 1em;
+    border-radius: 10px;
+    font-size: 2.5em;
+    background-color:rgb(68, 52, 45);;
+    color: white;
+    border: brown;
+    
+}
+.input-form{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+}
+.input-form input{
+    height: 2em;
+    width: 10em;
+    padding: 1em;
+    font-size: 1.5em;
+    margin: 1em;
+    border: none;
+}
+.submit-btn{
+    height: 2em;
+    width: 5em;
+    font-size: 2em;
+    background-color: rgb(86, 64, 54);
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+
+@media screen and (min-width: 480px) {
+   .logo{
+    width: 15em;
+   } 
+
+   .message{
+     font-size: 1.4em;
+     color: rgb(24, 57, 24);
+   }
+
+   .form-btn-div{
+    flex-direction: row;
+    justify-content: center;
+   }
+   .form-btn{
+        width: 6em;
+        height: 2.5em;
+        font-size: 2em;
+   }
+
+   .input-form input{
+    height: 1.5em;
+    width: 15em;
+    padding: 1em;
+    font-size: 1em;
+    margin: 1em;
+    border: none;
+   }
+   .submit-btn{
+    height: 2em;
+    width: 7em;
+    font-size: 1.5em;
+    margin-top: 1em;
+    background-color: rgb(86, 64, 54);
+    color: white;
+    border: none;
+    border-radius: 10px;
+   }
+}
+
+/*Quiz Screen*/
 .quiz-div{
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 10em;
+    text-align: center;
+}
+.quiz-div h3{
+    font-size: 3.5em;
 }
 .option-list{
     display: flex;
@@ -14,10 +125,57 @@ body{
     justify-content: center;
 }   
 .option-btn{
-    width: 10em;
+    width: 8em;
+    font-size: 2em;
+    height: 4em;
+    border-radius: 10px;
+    margin: 1em;
+    background-color: rgb(86, 64, 54);
+    color: white;
 }
-
-
+.option-btn-clicked{
+    width: 8em;
+    font-size: 2em;
+    height: 4em;
+    border-radius: 10px;
+    margin: 1em;
+    background-color: rgb(86, 64, 54);
+    color: white;
+}
+.next-btn{
+    width: 8em;
+    height: 3em;
+    font-size: 2.5em;
+    background-color:white;
+    color:rgb(86, 64, 54);
+    border-radius: 10px;
+}
+.result-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.trait-title{
+    font-size: 3em;
+    font-weight: bold;
+}
+.trait-list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    list-style: none;
+    font-size: 3em;
+    padding: 0;
+}
+.result-btn{
+    width: 8em;
+    height: 3em;
+    font-size: 2em;
+    background-color: rgb(86, 64, 54);
+    color: white;
+    border-radius: 10px;
+}
 
 /*Game Screen*/
 
@@ -50,7 +208,7 @@ body{
     background-color: black;
     color: white;
     width: 100%;
-    font-size: 2.5em;
+    font-size: 3.5em;
     height: 4em;
     position: relative;
 }

@@ -3,29 +3,26 @@ import React, { useState } from 'react';
 const Question = ({data, answerSelect, nextQuestion}) => {
   
   const {question, options} = data;
-    // receives userData from quiz.js
   const [chosenOption, setChosenOption] = useState(null);
-    // tracks the chosen option
   const [answerSelected, setAnswerSelected] = useState(false);
-    // tracks when answer is selected
+    
 
   const optionSelected = (optionName) => {
+    // Only the chosen options will have their class changed
     setChosenOption(optionName);
     setAnswerSelected(true);
 
+    // Saves the option that was selected for an array
     answerSelect(optionName)
-    // Passes the chosen option to the Quiz component
+    
   }
 
   const moveNextQuestion = () => {
     setAnswerSelected(false);
     setChosenOption(null);
-    // sets both states back to default
     nextQuestion();
-    // activates parameter to move to next question
+   
   }
-
- 
 
   return (
     <div className='quiz-div'>
@@ -33,7 +30,8 @@ const Question = ({data, answerSelect, nextQuestion}) => {
       <ul className='option-list'>
         {options.map((option, index) => (
           <li key={index}>
-            <button className={answerSelected ? 'option-btn-clicked' : 'option-btn'} onClick={() => optionSelected(option)}>
+
+            <button className={chosenOption == option ? 'option-btn-clicked' : 'option-btn'} onClick={() => optionSelected(option)}>
               {option}
             </button>
           </li>

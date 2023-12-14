@@ -6,30 +6,24 @@ import '../style.css';
  const Levels = ({currentLevel}) => {
     const [level, setLevel] = useState(currentLevel);
 
-    const choices = [
+    // Take currentLevel from MongoDB
+    const stages = [
         {
             id: 1,
             text: 'hello',
-            options: ['Closet', 'Drawer', 'Under the bed'],
+            stageInfo: {
+               stageNum:1.1,
+               options:['Closet', 'Drawer', 'Under the bed'],
+            },
             level: 1.1
-        }
+        },
         // use .map() & select the choices with the matching level
     ];
 
-
-    const cycleChoiceBtns = (choices) => {
-    
-    };
-
-    const nextLevel = () => {
-      setLevel(level + 1);
-    }
-    
-    console.log(level);
-
   return (
     <div>
-        <button onClick={nextLevel}>Continue</button>
+       
+        <button>Continue</button>
     </div>
   );
 }

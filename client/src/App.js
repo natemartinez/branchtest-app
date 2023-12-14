@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Signup from './components/Signup';
+import Forms from './components/Forms';
 import Main from './components/Main';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Signup />}></Route> 
+        <Route path="/" element={<Forms />}></Route> 
         <Route path="/main" element={<Main />}></Route>
       </Routes>
     </div>

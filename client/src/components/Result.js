@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './style.css';
-import Main from './Main';
 import { useNavigate } from 'react-router-dom';
 
 // This component will output personality results
@@ -26,10 +25,11 @@ const Result = (props) => {
     // use the trait inside URL using switch statements
     console.log('test')
   }
+  
   sendtoServer(finalResults);
 
   const moveToMain = (results) => {
-    let username = results[0];
+    let username = results[0].user;
     let data = results[1];
 
     navigate('/main', {state:{data, username}});

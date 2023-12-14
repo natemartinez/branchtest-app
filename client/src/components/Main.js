@@ -4,6 +4,7 @@ import {useLocation} from 'react-router-dom';
 import './style.css';
 import Levels from './logic/Levels';
 
+
  const HUD = () => {
   // Displays HUD & UI
 
@@ -62,16 +63,15 @@ import Levels from './logic/Levels';
   );
  };
 
-
  const Main = () => {
     const location = useLocation();
-    const currentUser = location.state.username.user;
-    const currentStats = location.state.data;
- 
+    const currentUser = location.state.username;
+
+
   return (
     <div>
-      <p>Username:{currentUser}</p>
-      <Game username={currentUser}/>
+      <p>Username: {currentUser}</p>
+      <Game username={currentUser} />
       <Menu/>
     </div>
   );

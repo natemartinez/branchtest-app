@@ -30,13 +30,13 @@ app.post('/signup', (req, res) => {
     try {
       const results = await PlayerModel.find({ username: newPlayer.username });
       if (results.length > 0) {
-        res.send('User already exists');
+        res.send({message:"User already exists"});
       } else {
         console.log('No documents found.');
         newPlayer.save()
         .then(updatedDocument => {
           console.log('Updated Document:', updatedDocument);
-          res.send('Signup Complete!')
+          res.send({message:'Signup Complete!'})
         })
         .catch(err => {
           console.error('Error:', err);
@@ -46,9 +46,8 @@ app.post('/signup', (req, res) => {
       console.error('Error:', err);
     };
   };
-  
+ 
   checkUser(); 
-
 });
 
 app.post('/sendUser', async (req, res) => {
@@ -81,18 +80,35 @@ app.post('/sendUser', async (req, res) => {
 
 });
 
-/* MUST ADD SAVE AND LOAD FUNCTIONS SOON
-app.post('/checkUser', async (req, res) => {
-  console.log(req.body);
-  let doc = req.body.username;
-   PlayerModel.find({progress: {$exists: true}}, function(err, docs){
-   });
-  } 
-  
-);
+app.post('/login', async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
 
-*/
- 
+  try {
+    // Check the username and the password
+
+    let doc = await PlayerModel.find({ $and: [
+      { username: username },
+      { password: password }
+    ]});
+
+    // use username to look 
+
+    if (!doc || doc.length === 0) {
+      res.status(200).json({ message: "User doesn't exist" });
+
+    } else {
+      console.log('Login Successful');
+      let currentUser = doc[0];
+      res.status(200).json({currentUser, message: 'Login Successful' });
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Error updating document' });
+  }
+  
+});
+
 connect();
 
 app.listen(3000, () => {

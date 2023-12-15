@@ -22,7 +22,6 @@ app.post('/signup', (req, res) => {
   const newPlayer = new PlayerModel({
     username: userData.username,
     password: userData.password,
-    personality: []
   });
 
   async function checkUser() {
@@ -113,27 +112,23 @@ app.post('/sendUser', async (req, res) => {
     } 
   });
 
-  console.log(stats); 
+  console.log(stats);
 
   try {
     let doc = await PlayerModel.findOne({ username: username.user });
 
     if (!doc) {
-      doc = new PlayerModel({ username: username.user, personality: results });
+      doc = new PlayerModel({ username: username.user, personality: results, stats: stats });
       await doc.save();
-
-      console.log('New document inserted successfully.');
       res.status(200).json({ message: 'New document inserted successfully' });
     } else {
-      await PlayerModel.updateOne({ username: username.user }, { $set: { personality: results } });
-      console.log('Document updated successfully.');
+      await PlayerModel.updateOne({ username: username.user }, { $set: { personality: results, stats: stats } });
       res.status(200).json({ message: 'Document updated successfully' });
     }
   } catch (err) {
     console.error('Error:', err);
     res.status(500).json({ message: 'Error updating document' });
   }
-
 });
 
 app.post('/login', async (req, res) => {

@@ -5,10 +5,7 @@ const PlayerModel = require('./models/player');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 const uri = 'mongodb+srv://natemartinez:Lj092101@players.m8tq7fu.mongodb.net/info?retryWrites=true&w=majority';
-
-
 async function connect() {
   try {
     await mongoose.connect(uri);
@@ -18,12 +15,14 @@ async function connect() {
   }
 }
 
+
+//Checks if there's not an existing user
 app.post('/signup', (req, res) => {
   const userData = req.body;
   const newPlayer = new PlayerModel({
     username: userData.username,
     password: userData.password,
-    stats: []
+    personality: []
   });
 
   async function checkUser() {
@@ -50,24 +49,83 @@ app.post('/signup', (req, res) => {
   checkUser(); 
 });
 
+//Handles quiz results
 app.post('/sendUser', async (req, res) => {
   const username = req.body[0];
   const results = req.body[1];
 
-  console.log(username, results);
+  let stats = {
+    physical: {
+      strength: 1,
+      dexterity: 1
+    },
+    mental: {
+      intuition: 1,
+      intelligence: 1
+    },
+    soul: {
+      willpower: 1,
+      resistance: 1
+    },
+    expression: {
+      creativity: 1,
+      presence: 1
+    }
+  };
+
+  results.forEach(result => {
+    switch (result) {
+       case 'Logical':
+       stats.mental.intelligence += 2;
+       stats.mental.intuition += 1;
+       break;
+       case 'Creative':
+       stats.expression.creativity += 3;
+       stats.expression.presence += 1;
+       break;
+       case 'Introvert':
+       stats.mental.intuition += 2;
+       stats.expression.creativity += 2;
+       break;
+       case 'Extrovert':
+       stats.expression.presence += 3;
+       stats.soul.willpower += 1;
+       break;
+       case 'Early Bird':
+       stats.physical.strength += 1;
+       stats.physical.dexterity += 1;
+       break;
+       case 'Night Owl':
+       stats.soul.resistance += 2;
+       stats.physical.strength += 2;
+       stats.soul.willpower += 2;
+       break;
+       case 'Fierce':
+       stats.physical.strength += 2;
+       stats.soul.willpower += 1;
+       stats.soul.resistance += 1;
+       break;
+       case 'Steady':
+       stats.mental.intuition += 2;
+       stats.expression.presence += 1;
+       stats.soul.willpower += 2;
+       break;
+    } 
+  });
+
+  console.log(stats); 
 
   try {
     let doc = await PlayerModel.findOne({ username: username.user });
 
     if (!doc) {
-      doc = new PlayerModel({ username: username.user, stats: results });
+      doc = new PlayerModel({ username: username.user, personality: results });
       await doc.save();
 
       console.log('New document inserted successfully.');
       res.status(200).json({ message: 'New document inserted successfully' });
-
     } else {
-      await PlayerModel.updateOne({ username: username.user }, { $set: { stats: results } });
+      await PlayerModel.updateOne({ username: username.user }, { $set: { personality: results } });
       console.log('Document updated successfully.');
       res.status(200).json({ message: 'Document updated successfully' });
     }
@@ -75,8 +133,6 @@ app.post('/sendUser', async (req, res) => {
     console.error('Error:', err);
     res.status(500).json({ message: 'Error updating document' });
   }
-
-
 
 });
 

@@ -20,8 +20,7 @@ const Question = ({data, answerSelect, nextQuestion}) => {
   const moveNextQuestion = () => {
     setAnswerSelected(false);
     setChosenOption(null);
-    nextQuestion();
-   
+    nextQuestion(); 
   }
 
   return (
@@ -31,7 +30,7 @@ const Question = ({data, answerSelect, nextQuestion}) => {
         {options.map((option, index) => (
           <li key={index}>
 
-            <button className={chosenOption == option ? 'option-btn-clicked' : 'option-btn'} onClick={() => optionSelected(option)}>
+            <button className={chosenOption === option ? 'option-btn-clicked' : 'option-btn'} onClick={() => optionSelected(option)}>
               {option}
             </button>
           </li>

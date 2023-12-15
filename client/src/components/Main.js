@@ -55,7 +55,6 @@ import Levels from './logic/Levels';
 
  // calls function to know what level to display
 
-
  return (
     <div>
       <Levels currentLevel={1.1}/> 

@@ -17,8 +17,7 @@ const Result = (props) => {
       })
       .catch(error => {
         console.error('Error:', error);
-      });
-  
+      }); 
   }
   const addImage = () => {
     // receive what trait it is

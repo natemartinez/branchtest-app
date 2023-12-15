@@ -37,9 +37,7 @@ const InfoForms = () => {
 
       axios.post('http://localhost:3000/signup', newUser)
       .then(response => {
-    
        const { message } = response.data;
-
        if (message === "User already exists") {
         setMessage(message);
         setFormSubmitted(false);  
@@ -199,7 +197,7 @@ const Quiz = (username) => {
     },
     {
       question: 'Whats your temper like?',
-      options: ['Hot-headed', 'Cold-blooded'],
+      options: ['Fierce', 'Steady'],
     }
   ]
 

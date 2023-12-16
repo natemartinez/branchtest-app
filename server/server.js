@@ -15,7 +15,6 @@ async function connect() {
   }
 }
 
-
 //Checks if there's not an existing user
 app.post('/signup', (req, res) => {
   const userData = req.body;
@@ -48,7 +47,7 @@ app.post('/signup', (req, res) => {
   checkUser(); 
 });
 
-//Handles quiz results
+//Handles quiz results and intializes 'stats'
 app.post('/sendUser', async (req, res) => {
   const username = req.body[0];
   const results = req.body[1];
@@ -112,8 +111,6 @@ app.post('/sendUser', async (req, res) => {
     } 
   });
 
-  console.log(stats);
-
   try {
     let doc = await PlayerModel.findOne({ username: username.user });
 
@@ -123,7 +120,7 @@ app.post('/sendUser', async (req, res) => {
       res.status(200).json({ message: 'New document inserted successfully' });
     } else {
       await PlayerModel.updateOne({ username: username.user }, { $set: { personality: results, stats: stats } });
-      res.status(200).json({ message: 'Document updated successfully' });
+      res.status(200).json({ message: 'Document updated successfully', stats });
     }
   } catch (err) {
     console.error('Error:', err);

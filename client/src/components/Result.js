@@ -7,30 +7,30 @@ import { useNavigate } from 'react-router-dom';
 
 const Result = (props) => {
   const navigate = useNavigate();
-  const { data, username } = props;
+  const { username, data } = props;
   const finalResults = [username, data];
   
-  const sendtoServer = (results) => {
-    axios.post('http://localhost:3000/sendUser', results)
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      }); 
-  }
-  const addImage = () => {
-    // receive what trait it is
-    // use the trait inside URL using switch statements
-    console.log('test')
-  }
-  
-  sendtoServer(finalResults);
+  const [stats, setStats] = useState([]);
+
+  useEffect(() => {
+    const sendtoServer = (results) => {
+      axios.post('http://localhost:3000/sendUser', results)
+        .then(response => {
+          let statResults = response.data.stats;
+          setStats(statResults);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        }); 
+    };
+    sendtoServer(finalResults);
+  }, []);
+
+  console.log(stats);
 
   const moveToMain = (results) => {
     let username = results[0].user;
     let data = results[1];
-
     navigate('/main', {state:{data, username}});
   };
 
@@ -39,12 +39,24 @@ const Result = (props) => {
       <p className='trait-title'>Your traits:</p>
       <ul className='trait-list'>{data.map((answer, index) =>
       //add image with every iteration
-       (<li key={index}>
-        {addImage()}
-        {answer}
-        </li>))}
-       </ul>
-       <button className='result-btn' onClick={() => moveToMain(finalResults)}>Continue</button>
+       (<li key={index}>{answer}</li>
+        
+       ))}
+      </ul>
+      <div className='stats-list'>
+        {Object.keys(stats).map(category => (
+         <div key={category}>
+          <h2>{category}</h2>
+           <ul>
+             {Object.entries(stats[category]).map(([trait, value]) => (
+             <li key={trait}>
+              {trait}: {value}
+             </li>
+             ))}
+          </ul>
+       </div> ))} 
+      </div> 
+      <button className='result-btn' onClick={() => moveToMain(finalResults)}>Continue</button>
     </div>
   );
 };

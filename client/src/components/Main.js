@@ -49,23 +49,19 @@ import Levels from './logic/Levels';
  };
  const Game = (username) => {
  // Controls current game logic
-  async function getLevel(){
-  // use axios.get, if it doesnt work, then
-  }
-
  // calls function to know what level to display
 
  return (
     <div>
-      <Levels currentLevel={1.1}/> 
+      <Levels playerName={username}/> 
     </div>
   );
  };
 
  const Main = () => {
     const location = useLocation();
-    const currentUser = location.state.username;
-
+    let currentUser = location.state.username;
+  // try to save userData inside currentUser
 
   return (
     <div>

@@ -26,8 +26,6 @@ const Result = (props) => {
     sendtoServer(finalResults);
   }, []);
 
-  console.log(stats);
-
   const moveToMain = (results) => {
     let username = results[0].user;
     let data = results[1];
@@ -45,15 +43,17 @@ const Result = (props) => {
       </ul>
       <div className='stats-list'>
         {Object.keys(stats).map(category => (
-         <div key={category}>
-          <h2>{category}</h2>
-           <ul>
+         <div id={category} className='stat-div' key={category}>
+          <div>
+            <h2>{category}</h2>
+            <ul>
              {Object.entries(stats[category]).map(([trait, value]) => (
              <li key={trait}>
               {trait}: {value}
              </li>
              ))}
-          </ul>
+            </ul>
+          </div>
        </div> ))} 
       </div> 
       <button className='result-btn' onClick={() => moveToMain(finalResults)}>Continue</button>

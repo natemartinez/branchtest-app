@@ -1,5 +1,5 @@
 body{
-    background-color: antiquewhite;
+    background-color: #ece3bf;
     font-family: 'Red Hat Display';
     font-weight: 300;
 }
@@ -40,7 +40,6 @@ body{
     background-color:rgb(68, 52, 45);;
     color: white;
     border: brown;
-    
 }
 .input-form{
     display: flex;
@@ -172,13 +171,52 @@ body{
     width: 8em;
     height: 3em;
     font-size: 2em;
-    background-color: rgb(86, 64, 54);
+    background-color: rgb(59, 49, 43);
     color: white;
     border-radius: 10px;
+    margin: 3em;
 }
 
-/*Game Screen*/
+.stats-list{
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    color: rgb(0, 0, 0);
+}
+.stats-list ul{
+    display: flex;
+    list-style: none;
+    align-items: center;
+    flex-direction: row;
+    padding: 0;
+    justify-content: space-evenly;
+}
+.stat-div{
+    width: 100%;
+    text-align: center;
+    font-size: 1.8em;
+    color: black;
+}
+#physical{
+    background-color: #ff8a88;
+}
+#mental{
+    background-color: #7f7fff;
+}
+#soul{
+    background-color:#76e27f;
+}
+#expression{
+    background-color: #efa51d;
+}
+@media screen and (min-width: 480px) {
+   
+}
+  
 
+/*Game Screen*/
 .main-menu{
     display: flex;
     position:fixed;

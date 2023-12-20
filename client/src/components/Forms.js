@@ -107,7 +107,7 @@ const InfoForms = () => {
        
          axios.post('http://localhost:3000/login', existingUser)
          .then(response => {
-          console.log(response);
+           console.log(response.data);
            const { message } = response.data;
   
            if (message === "User doesn't exist") {

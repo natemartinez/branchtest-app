@@ -3,26 +3,37 @@ import axios from 'axios';
 import {useLocation} from 'react-router-dom';
 import '../style.css';
 
- const Levels = ({currentLevel}) => {
-    const [level, setLevel] = useState(currentLevel);
+// Component will output the correct level options
+ const Levels = ({playerName}) => {
+    // count receives level number from player info
+    const [count, setCount] = useState(null);
 
-    // Take currentLevel from MongoDB
-    const stages = [
-        {
-            id: 1,
-            text: 'hello',
-            stageInfo: {
-               stageNum:1.1,
-               options:['Closet', 'Drawer', 'Under the bed'],
-            },
-            level: 1.1
-        },
-        // use .map() & select the choices with the matching level
-    ];
+    async function getLevel(currentUser){
+      console.log(currentUser);
+      // This function will return the currentStage data
+      // which will send to Levels to iterate over it
+       axios.post('http://localhost:3000/currentStage', currentUser)
+        .then(response => {
+         console.log(response.data);
+         
+        })
+        .catch(error => {
+         console.error('Error:', error);
+        });
+   
+     };
+      
+
+    getLevel(playerName);
+
+    // Each level will show level number, location and options
 
   return (
     <div>
-       
+      <div>
+        
+      </div>
+         
         <button>Continue</button>
     </div>
   );

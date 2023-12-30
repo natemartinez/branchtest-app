@@ -170,7 +170,7 @@ app.post('/currentStage', async (req, res) => {
 
     const Stages = [
       {
-          id: 1,
+          name: 'search1',
           text: 'hello',
           type: 'search',
           stageInfo: {
@@ -213,7 +213,7 @@ app.post('/currentStage', async (req, res) => {
           level: 1.1
       },
       {
-          id: 2,
+          name:'location1',
           text: 'hello',
           type: 'location',
           stageInfo: {
@@ -221,41 +221,29 @@ app.post('/currentStage', async (req, res) => {
              options:[
               {
                 name:'Office',
-                type: 'physical',
-                stat: 'strength',
-                difficulty: 1,
-                result: 'Jacket',
-                probability:''
+                result: 1.3,
               },
               {
                 name:'Hallway',
-                type: 'mental',
-                stat: 'intuition',
-                difficulty: 1,
-                result: 'Med-kit',
-                probability:''
+                result: 1.4,
               },
               {
                 name:'Downstairs',
-                type: 'mental',
-                stat: 'intuition',
-                difficulty: 1,
-                result: 'Med-kit',
-                probability:''
+                result: 1.5,
               },
              ]
           },
           level: 1.2
       },
       {
-        id: 2,
+        name: 'Office',
         text: 'hello',
-        type: 'location',
+        type: 'search',
         stageInfo: {
            stageNum:1.3,
            options:[
             {
-              name:'Office',
+              name:'Desk',
               type: 'physical',
               stat: 'strength',
               difficulty: 1,
@@ -263,7 +251,7 @@ app.post('/currentStage', async (req, res) => {
               probability:''
             },
             {
-              name:'Hallway',
+              name:'File cabinet',
               type: 'mental',
               stat: 'intuition',
               difficulty: 1,
@@ -271,7 +259,15 @@ app.post('/currentStage', async (req, res) => {
               probability:''
             },
             {
-              name:'Downstairs',
+              name:'Check the whiteboard',
+              type: 'mental',
+              stat: 'intuition',
+              difficulty: 1,
+              result: 'Med-kit',
+              probability:''
+            },
+            {
+              name:'Check the windows',
               type: 'mental',
               stat: 'intuition',
               difficulty: 1,
@@ -281,34 +277,43 @@ app.post('/currentStage', async (req, res) => {
            ]
         },
         level: 1.3
-    },
+      },
 
     ];
 
-    function buildOptions(level, playerStats){
+   async function buildOptions(level, playerStats){
 
       for (let i = 0; i < Stages.length; i++) {
         if (Stages[i].level === level) {
+          let stageType = Stages[i].type;
           let options = Stages[i].stageInfo.options;
 
-          options.map((option, index) => {
-            let optionType = option.type;
-            let optionStat = option.stat;
+            if(stageType === 'location'){
 
-            let userStat = playerStats[optionType][optionStat];
+            
+            } else if(stageType === 'search') {
+              // search events will compare user stats with options' difficulty
+              // to come out to a probability of success
+              options.map((option, index) => {
+              let optionType = option.type;
+              let optionStat = option.stat;
 
-              if(userStat > option.difficulty){
+              let userStat = playerStats[optionType][optionStat];
+
+               if(userStat > option.difficulty){
                 option.probability = 'easy'
-              }else if(userStat < option.difficulty){
+               }else if(userStat < option.difficulty){
                 option.probability = 'hard';
-              } else{
+               } else{
                 option.probability = 'medium';
-              }
-          });
+               }
+              });
+              
+            };
+              res.status(200).json({stageType, options});
+              break;
 
-          res.status(200).json({options});
-          break;
-        }
+         }
       } 
     };
 
@@ -327,25 +332,38 @@ app.post('/currentStage', async (req, res) => {
     };
 });
 
-app.post('/updateProgress', async (req , res) => {
+app.post('/updateProgress', async (req, res) => {
     const {username} = req.body;
     try {
       let doc = await PlayerModel.findOne({ username: username });
       if (doc) { 
         let userProgress = doc.progress + 0.1;
         let nextProgress = userProgress.toFixed(1);
-
-       await PlayerModel.updateOne({ $set: { progress: 1.2} });
-
-       // await buildOptions(userProgress, userStats);
+        
+       await PlayerModel.updateOne({username: username},{ $set: { progress: nextProgress}});
       }
-
+      res.send('Level updated');
     } catch (err) {
         console.error('Error', err);
         res.status(500).json({ message: "An error has occurred" });
     };
 
 });
+
+app.post('/locationChange', async (req, res) => {
+    const {username} = req.body.currentUser;
+    const {level} = req.body;   
+    console.log(username);
+
+    try {
+      await PlayerModel.updateOne({username: username},{ $set: { progress: level}});
+    } catch (err) {
+        console.error('Error', err);
+        res.status(500).json({ message: "An error has occurred" });
+    };
+
+});
+
 
 connect();
 

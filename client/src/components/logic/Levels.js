@@ -6,39 +6,50 @@ import '../style.css';
 // Component will output the correct level options
  const Levels = ({playerName}) => {
     // count receives level number from player info
-    const [level, setLevel] = useState(null);
+    const [stageType, setStageType] = useState(null);
 
     const [showResult, setShowResult] = useState(false);
     const [showResultEvent, setShowResultEvent] = useState(false);
 
     const [options, setOptions] = useState([]);
-   
-    const displayOptions = (options) => {
-      // setOptions = optionName
-      // className = difficulty
-       let optionNames = [];
 
-       for(let i=0; i < options.length; i++){
-        let optionObj = {
+    const [location, setLocation] = useState('');
+
+    const buttons = document.querySelectorAll('.game-btn-clicked');
+
+    const setInactive = (event) => {
+     // sets the specific button chosen as a clicked class
+      event.target.className = 'game-btn-clicked';
+    };
+
+    const displayOptions = (type, options) => {
+      let optionNames = [];
+      setStageType(type);
+
+      for(let i=0; i < options.length; i++){
+         let optionObj = {
            "name" : options[i].name,
            "diff" : options[i].probability,
            "result" : options[i].result,
-        }
-        
-        optionNames.push(optionObj);
-       }
-      
+         }
+         optionNames.push(optionObj);
+      }
       setOptions(optionNames);
-      // the problem is that it can't be iterated since it's
-      // an object
     };
 
-    const triggerResult = (result, prob) => {
+    const triggerResult = (currentUser, result, prob) => {
+       // setting location object to send to server
+       if(stageType === 'location'){
+        // highlight the button
+        // must wait to press next button
+        // do I use async??
+         setLocation(result);
+        // MUST CHANGE 
+       } else if(stageType === 'search'){
+         let outcome = Math.floor(Math.random() * 100);
 
-      let outcome = Math.floor(Math.random() * 100);
-
-      const decideOutcome = (outcome) => {
-        if (prob === 'easy'){
+         const decideOutcome = (outcome) => {
+          if (prob === 'easy'){
           if(outcome < 90){
            setShowResult('success');
            setShowResultEvent('You have received a ' + result);
@@ -46,7 +57,7 @@ import '../style.css';
            setShowResult('fail');
            setShowResultEvent('You have received nothing');
           }
-        } else if (prob === 'hard'){
+          } else if (prob === 'hard'){
           if(outcome > 90){
            setShowResult('success' );
            setShowResultEvent('You have received a ' + result);
@@ -54,7 +65,7 @@ import '../style.css';
            setShowResult('fail');
            setShowResultEvent('You have received nothing');
           }
-        } else {
+          } else {
           if(outcome > 50){
            setShowResult('success');
            setShowResult('You have received a ' + result);
@@ -62,70 +73,92 @@ import '../style.css';
            setShowResult('fail');
            setShowResultEvent('You have received nothing');
           }
-        }
-      };
+          }
+         };
 
-      decideOutcome(outcome);
-    };
+         decideOutcome(outcome);
 
-    const setClicked = (event) => {
-      event.target.className = 'game-btn-clicked';
-    };
-
+       }
     
-    const nextLevel = (currentUser) => {
-      //accesses doc.progress to then increase it by one 
-      // when the next button is clicked
-      axios.post('http://localhost:3000/updateProgress', currentUser)
-        .then(response => {
-          console.log(response.data);
-          
-        })
-        .catch(error => {
-         console.error('Error:', error);
-        });
-    }
+    };
 
-    async function getLevel(currentUser){
+    async function getLevel(currentUser) {
       // This function will return the currentStage data
       // which will send to Levels to iterate over it
+
        axios.post('http://localhost:3000/currentStage', currentUser)
         .then(response => {
-          displayOptions(response.data.options);
+          let options = response.data.options;
+          let type = response.data.stageType;
+          displayOptions(type, options);
         })
         .catch(error => {
          console.error('Error:', error);
         });
     };
-    
-    getLevel(playerName);
 
-    // Each level will show level number, location and options
+    const nextLevel = (currentUser, level) => { 
+       
+       if(stageType === 'location'){
+        buttons.forEach((button) => {
+          button.className = 'game-btn';
+         });
+        let location = {
+           currentUser,
+           level: level
+        };
+
+        axios.post('http://localhost:3000/locationChange', location)
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+         console.error('Error:', error);
+        });
+       } else {
+  
+          buttons.forEach((button) => {
+           button.className = 'game-btn';
+          });
+          axios.post('http://localhost:3000/updateProgress', currentUser)
+          .then(response => {
+            console.log(response.data);
+          })
+          .catch(error => {
+           console.error('Error:', error);
+          });
+       }
+
+       getLevel(currentUser);
+    }
+
+   
+    getLevel(playerName);
 
   return (
     <div className='game-options'>
-      {options.map((option, index) => (
-        <div key={index}>
-          <button 
-            onClick={(event) => {setClicked(event); triggerResult(option.result, option.diff);}}
-            className='game-btn' id={option.diff} type="submit">
-            {option.name}
-          </button>
-        </div>
-      ))}
-      {showResult && (
-      <div className='result-div'>
-        <div className='result-info'>
-          <h1>{showResult}</h1>
-          <h3>{showResultEvent}</h3>
-          <button onClick = {() => setShowResult(false)}type="submit">Continue</button>
-        </div>
-        
-      </div>
-      )}
-      <button onClick={() => nextLevel(playerName)} id='next-btn'>Next</button>
+        {options.map((option, index) => (
+           <div key={index}>
+             <button 
+               onClick={(event) => {setInactive(event); triggerResult(playerName, option.result, option.diff)}}
+               className='game-btn' id={option.diff} type="submit">
+               {option.name}
+             </button>
+           </div>
+             ))}
+             {showResult && (
+             <div className='result-div'>
+               <div className='result-info'>
+                 <h1>{showResult}</h1>
+                 <h3>{showResultEvent}</h3>
+                 <button onClick = {() => setShowResult(false)}type="submit">Continue</button>
+               </div>
+               
+             </div>
+             )}
+             <button onClick={() => nextLevel(playerName, location)} id='next-btn'>Next</button>
     </div>
   );
-}
+};
 
 export default Levels;

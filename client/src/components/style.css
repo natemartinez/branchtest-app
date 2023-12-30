@@ -280,7 +280,10 @@ body{
     border-radius: 10px;
     font-size: 1.5em;
     padding: 0.5em;
-    display: none;
+    background-color:  darkslategrey!important;
+    color:black!important;
+    opacity: 50%;
+    pointer-events: none;
 }
 #easy{
     background-color: #85c98a;

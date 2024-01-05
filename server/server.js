@@ -14,7 +14,6 @@ async function connect() {
     console.error(error);
   }
 }
-
 //Checks if there's not an existing user
 app.post('/signup', (req, res) => {
   const userData = req.body;
@@ -74,7 +73,6 @@ app.post('/login', async (req, res) => {
   }
   
 });
-
 //Handles quiz results and intializes 'stats'
 app.post('/sendUser', async (req, res) => {
   const username = req.body[0];
@@ -161,20 +159,14 @@ app.post('/sendUser', async (req, res) => {
   }
 });
 
-// All stages
-app.post('/currentStage', async (req, res) => {
-    const {username} = req.body;
-    // Now i will use the username thats inside req.body with .find()
-    // to find the data that's associated with that user
-    // user stat values must be strings
 
-    const Stages = [
+ const Stages = [
       {
           name: 'search1',
           text: 'hello',
           type: 'search',
           stageInfo: {
-             stageNum:1.1,
+             level:1.1,
              options:[
               {
                 name:'Closet',
@@ -208,16 +200,16 @@ app.post('/currentStage', async (req, res) => {
                 result: 'Note',
                 probability:''
               },
-             ]
-          },
-          level: 1.1
+             ],
+             result:1.2
+          },     
       },
       {
           name:'location1',
           text: 'hello',
           type: 'location',
           stageInfo: {
-             stageNum:1.2,
+             level:1.2,
              options:[
               {
                 name:'Office',
@@ -240,7 +232,7 @@ app.post('/currentStage', async (req, res) => {
         text: 'hello',
         type: 'search',
         stageInfo: {
-           stageNum:1.3,
+           level:1.3,
            options:[
             {
               name:'Desk',
@@ -274,30 +266,43 @@ app.post('/currentStage', async (req, res) => {
               result: 'Med-kit',
               probability:''
             },
-           ]
-        },
-        level: 1.3
+           ],
+           result: 1.7
+        }, 
       },
+      {
+        name:'battle1',
+        text: 'hello',
+        type: 'combat',
+        stageInfo: {
+           stageNum:1.2,
+           enemies:[
+           ],
 
-    ];
+        },
+        level: 1.7
+    },
+ ];
 
-   async function buildOptions(level, playerStats){
-
+// All stages
+app.post('/currentStage', async (req, res) => {
+  // something is off with the logic
+    const {username} = req.body;
+    
+    async function buildOptions(level, playerStats){
       for (let i = 0; i < Stages.length; i++) {
-        if (Stages[i].level === level) {
+        let curStageInfo = Stages[i].stageInfo;
+        if (curStageInfo.level === level) {
           let stageType = Stages[i].type;
-          let options = Stages[i].stageInfo.options;
-
-            if(stageType === 'location'){
-
-            
-            } else if(stageType === 'search') {
+          let options = curStageInfo.options;
+          let level = curStageInfo.level;
+      
+           if(stageType === 'search') {
               // search events will compare user stats with options' difficulty
               // to come out to a probability of success
               options.map((option, index) => {
               let optionType = option.type;
               let optionStat = option.stat;
-
               let userStat = playerStats[optionType][optionStat];
 
                if(userStat > option.difficulty){
@@ -307,13 +312,12 @@ app.post('/currentStage', async (req, res) => {
                } else{
                 option.probability = 'medium';
                }
-              });
-              
-            };
-              res.status(200).json({stageType, options});
-              break;
+              });   
+           };
 
-         }
+          res.status(200).json({stageType, options, level});
+          break;
+        }
       } 
     };
 
@@ -332,16 +336,21 @@ app.post('/currentStage', async (req, res) => {
     };
 });
 
-app.post('/updateProgress', async (req, res) => {
-    const {username} = req.body;
+app.post('/stageChange', async (req, res) => {
+    const {username} = req.body.username;
+    const level = req.body.level;
+    let nextStage = '';
+    
+    for (let i = 0; i < Stages.length; i++) {
+      let stageInfo = Stages[i].stageInfo;
+
+      if(stageInfo.level === level) {
+       nextStage = stageInfo.result;
+      } 
+    };
+    
     try {
-      let doc = await PlayerModel.findOne({ username: username });
-      if (doc) { 
-        let userProgress = doc.progress + 0.1;
-        let nextProgress = userProgress.toFixed(1);
-        
-       await PlayerModel.updateOne({username: username},{ $set: { progress: nextProgress}});
-      }
+      await PlayerModel.updateOne({username: username},{ $set: { progress: nextStage}});
       res.send('Level updated');
     } catch (err) {
         console.error('Error', err);
@@ -350,20 +359,35 @@ app.post('/updateProgress', async (req, res) => {
 
 });
 
-app.post('/locationChange', async (req, res) => {
-    const {username} = req.body.currentUser;
-    const {level} = req.body;   
-    console.log(username);
+// Skill list
+app.post('/receiveSkills', async (req, res) => {
+  const {username} = req.body;
 
-    try {
-      await PlayerModel.updateOne({username: username},{ $set: { progress: level}});
-    } catch (err) {
-        console.error('Error', err);
-        res.status(500).json({ message: "An error has occurred" });
-    };
+  const Skills = {
+    "Physical": [
+      {
+        "Punch": {
+          "damage": 5
+        }
+      }
+    ],
+  };
+
+  try {
+    let doc = await PlayerModel.findOne({ username: username });
+    if (doc) { 
+      let userProgress = doc.progress + 0.1;
+      let nextProgress = userProgress.toFixed(1);
+      
+     await PlayerModel.updateOne({username: username},{ $set: { progress: nextProgress}});
+    }
+    res.send('Level updated');
+  } catch (err) {
+      console.error('Error', err);
+      res.status(500).json({ message: "An error has occurred" });
+  };
 
 });
-
 
 connect();
 

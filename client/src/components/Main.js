@@ -65,7 +65,7 @@ import Levels from './logic/Levels';
 
   return (
     <div>
-      <p>{currentUser}</p>
+      <p id='username'>{currentUser}</p>
       <Game username={currentUser} />
       <Menu/>
     </div>

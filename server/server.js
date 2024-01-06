@@ -159,8 +159,7 @@ app.post('/sendUser', async (req, res) => {
   }
 });
 
-
- const Stages = [
+const Stages = [
       {
           name: 'search1',
           text: 'hello',
@@ -223,9 +222,8 @@ app.post('/sendUser', async (req, res) => {
                 name:'Downstairs',
                 result: 1.5,
               },
-             ]
+             ]   
           },
-          level: 1.2
       },
       {
         name: 'Office',
@@ -275,32 +273,30 @@ app.post('/sendUser', async (req, res) => {
         text: 'hello',
         type: 'combat',
         stageInfo: {
-           stageNum:1.2,
+           level: 1.7,
            enemies:[
            ],
-
         },
-        level: 1.7
-    },
- ];
+      },
+];
 
 // All stages
 app.post('/currentStage', async (req, res) => {
-  // something is off with the logic
     const {username} = req.body;
     
     async function buildOptions(level, playerStats){
+
       for (let i = 0; i < Stages.length; i++) {
         let curStageInfo = Stages[i].stageInfo;
         if (curStageInfo.level === level) {
           let stageType = Stages[i].type;
           let options = curStageInfo.options;
-          let level = curStageInfo.level;
-      
+          let curStage = curStageInfo.level;
+
            if(stageType === 'search') {
               // search events will compare user stats with options' difficulty
               // to come out to a probability of success
-              options.map((option, index) => {
+             options.map((option, index) => {
               let optionType = option.type;
               let optionStat = option.stat;
               let userStat = playerStats[optionType][optionStat];
@@ -312,10 +308,11 @@ app.post('/currentStage', async (req, res) => {
                } else{
                 option.probability = 'medium';
                }
-              });   
+             });   
+             
            };
 
-          res.status(200).json({stageType, options, level});
+          res.status(200).json({stageType, options, curStage});
           break;
         }
       } 
@@ -339,24 +336,34 @@ app.post('/currentStage', async (req, res) => {
 app.post('/stageChange', async (req, res) => {
     const {username} = req.body.username;
     const level = req.body.level;
+    const type = req.body.type;
+    
     let nextStage = '';
-    
-    for (let i = 0; i < Stages.length; i++) {
-      let stageInfo = Stages[i].stageInfo;
 
-      if(stageInfo.level === level) {
-       nextStage = stageInfo.result;
-      } 
+    if(type === 'location'){
+       for (let i = 0; i < Stages.length; i++) {
+         if(Stages[i].stageInfo.level === level){
+          await PlayerModel.updateOne({username: username},{ $set: { progress:level}});
+          break;
+         }
+       };
+    } else if(type === 'search'){
+       for (let i = 0; i < Stages.length; i++) {
+       let stageInfo = Stages[i].stageInfo;
+        if(stageInfo.level === level) {
+         nextStage = stageInfo.result;
+         console.log(nextStage)
+         await PlayerModel.updateOne({username: username},{ $set: { progress:nextStage}});
+         break;
+        } 
+       };
     };
-    
     try {
-      await PlayerModel.updateOne({username: username},{ $set: { progress: nextStage}});
       res.send('Level updated');
     } catch (err) {
         console.error('Error', err);
         res.status(500).json({ message: "An error has occurred" });
     };
-
 });
 
 // Skill list

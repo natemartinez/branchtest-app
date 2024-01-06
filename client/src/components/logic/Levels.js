@@ -11,7 +11,8 @@ import '../style.css';
     const [showResult, setShowResult] = useState(false);
     const [showResultEvent, setShowResultEvent] = useState(false);
     const [options, setOptions] = useState([]);
-    const [nextStage, setNextStage] = useState('');
+    const [curStage, setCurStage] = useState('');
+    const [nextStage, setnextStage] = useState('');
 
     const buttons = document.querySelectorAll('.game-btn-clicked');
 
@@ -23,24 +24,40 @@ import '../style.css';
     const displayOptions = (type, options, level) => {
       let optionNames = [];
       setStageType(type);
-      setNextStage(level);
+      setCurStage(level);
 
-      for(let i=0; i < options.length; i++){
-         let optionObj = {
+      if(type === 'combat'){
+        axios.post('http://localhost:3000/receiveUserInfo', currentUser)
+        .then(response => {
+      
+          let options = response.data.options;
+          let type = response.data.stageType;
+          let curLevel = response.data.curStage;
+
+          displayOptions(type, options, curLevel);
+        })
+        .catch(error => {
+         console.error('Error:', error);
+        });
+      } else {
+        
+        for(let i=0; i < options.length; i++){
+          let optionObj = {
            "name" : options[i].name,
            "diff" : options[i].probability,
            "result" : options[i].result,
-         }
-         optionNames.push(optionObj);
+          }
+          optionNames.push(optionObj);
+        }
+        setOptions(optionNames);
       }
-      setOptions(optionNames);
+
     };
 
     const triggerResult = (currentUser, result, prob) => {
-       // setting location object to send to server
        if(stageType === 'location'){
-        //check if line below is necessary
-         setNextStage(result);
+        setnextStage(result);
+       
        } else if(stageType === 'search'){
          let outcome = Math.floor(Math.random() * 100);
 
@@ -83,29 +100,30 @@ import '../style.css';
       // which will send to Levels to iterate over it
        axios.post('http://localhost:3000/currentStage', currentUser)
         .then(response => {
+      
           let options = response.data.options;
           let type = response.data.stageType;
-          let level = response.data.level;
+          let curLevel = response.data.curStage;
 
-          displayOptions(type, options, level);
+          displayOptions(type, options, curLevel);
         })
         .catch(error => {
          console.error('Error:', error);
         });
     };
 
-    const nextLevel = (currentUser, level) => { 
-        // use level param to grab it's result
-        // then update user progress = result
+    const nextLevel = (currentUser, level, type) => { 
 
         buttons.forEach((button) => {
           button.className = 'game-btn';
-         });
+        });
 
         let stageInfo = {
           username: currentUser,
-          level: level
-        }
+          level: level,
+          type: type
+        };
+        console.log(stageInfo)
 
         axios.post('http://localhost:3000/stageChange', stageInfo)
         .then(response => {
@@ -119,6 +137,7 @@ import '../style.css';
     }
 
     getLevel(playerName);
+
 
   return (
     <div className='game-options'>
@@ -141,7 +160,7 @@ import '../style.css';
                
              </div>
              )}
-             <button onClick={() => nextLevel(playerName, nextStage)} id='next-btn'>Next</button>
+             <button onClick={() => nextLevel(playerName, nextStage, stageType)} id='next-btn'>Next</button>
     </div>
   );
 };

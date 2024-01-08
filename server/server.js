@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const PlayerModel = require('./models/player');
+const EnemyModel = require('./models/enemies');
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -14,6 +15,7 @@ async function connect() {
     console.error(error);
   }
 }
+
 //Checks if there's not an existing user
 app.post('/signup', (req, res) => {
   const userData = req.body;
@@ -159,13 +161,14 @@ app.post('/sendUser', async (req, res) => {
   }
 });
 
+// I should eventually put Stages into a database
 const Stages = [
       {
           name: 'search1',
-          text: 'hello',
-          type: 'search',
+          text: 'hello',        
           stageInfo: {
              level:1.1,
+             type: 'search',
              options:[
               {
                 name:'Closet',
@@ -205,10 +208,10 @@ const Stages = [
       },
       {
           name:'location1',
-          text: 'hello',
-          type: 'location',
+          text: 'hello',    
           stageInfo: {
              level:1.2,
+             type: 'location', 
              options:[
               {
                 name:'Office',
@@ -228,9 +231,9 @@ const Stages = [
       {
         name: 'Office',
         text: 'hello',
-        type: 'search',
         stageInfo: {
            level:1.3,
+           type: 'search',
            options:[
             {
               name:'Desk',
@@ -271,11 +274,10 @@ const Stages = [
       {
         name:'battle1',
         text: 'hello',
-        type: 'combat',
         stageInfo: {
            level: 1.7,
-           enemies:[
-           ],
+           enemies:['ghost', 'ghost'],
+           type: 'combat'
         },
       },
 ];
@@ -285,11 +287,11 @@ app.post('/currentStage', async (req, res) => {
     const {username} = req.body;
     
     async function buildOptions(level, playerStats){
-
       for (let i = 0; i < Stages.length; i++) {
         let curStageInfo = Stages[i].stageInfo;
+        console.log(curStageInfo)
         if (curStageInfo.level === level) {
-          let stageType = Stages[i].type;
+          let stageType = curStageInfo.type;
           let options = curStageInfo.options;
           let curStage = curStageInfo.level;
 
@@ -309,10 +311,10 @@ app.post('/currentStage', async (req, res) => {
                 option.probability = 'medium';
                }
              });   
-             
+             res.status(200).json({stageType, options, curStage});
+           } else {
+             res.status(200).json({stageType, options, curStage});
            };
-
-          res.status(200).json({stageType, options, curStage});
           break;
         }
       } 
@@ -333,6 +335,7 @@ app.post('/currentStage', async (req, res) => {
     };
 });
 
+// Stage progression
 app.post('/stageChange', async (req, res) => {
     const {username} = req.body.username;
     const level = req.body.level;
@@ -340,6 +343,7 @@ app.post('/stageChange', async (req, res) => {
     
     let nextStage = '';
 
+    // used to update database for progression
     if(type === 'location'){
        for (let i = 0; i < Stages.length; i++) {
          if(Stages[i].stageInfo.level === level){
@@ -349,15 +353,17 @@ app.post('/stageChange', async (req, res) => {
        };
     } else if(type === 'search'){
        for (let i = 0; i < Stages.length; i++) {
-       let stageInfo = Stages[i].stageInfo;
-        if(stageInfo.level === level) {
-         nextStage = stageInfo.result;
-         console.log(nextStage)
-         await PlayerModel.updateOne({username: username},{ $set: { progress:nextStage}});
-         break;
-        } 
+        let stageInfo = Stages[i].stageInfo;
+         if(stageInfo.level === level) {
+          console.log(level)
+          nextStage = stageInfo.result;
+          await PlayerModel.updateOne({username: username},{ $set: { progress:nextStage}});
+          break;
+         } 
        };
     };
+    //
+
     try {
       res.send('Level updated');
     } catch (err) {
@@ -381,13 +387,6 @@ app.post('/receiveSkills', async (req, res) => {
   };
 
   try {
-    let doc = await PlayerModel.findOne({ username: username });
-    if (doc) { 
-      let userProgress = doc.progress + 0.1;
-      let nextProgress = userProgress.toFixed(1);
-      
-     await PlayerModel.updateOne({username: username},{ $set: { progress: nextProgress}});
-    }
     res.send('Level updated');
   } catch (err) {
       console.error('Error', err);
@@ -395,6 +394,34 @@ app.post('/receiveSkills', async (req, res) => {
   };
 
 });
+
+app.post('/combatStart', async (req, res) => {
+  const {level} = req.body;
+ 
+  
+  for (let i = 0; i < Stages.length; i++) {
+    let stageInfo = Stages[i].stageInfo;
+     if(stageInfo.level === level) {
+      // Find a way to receive multiple enemies in an array
+       let enemies = [];
+       for(let i = 0; i < stageInfo[enemies].length; i++){
+        let curEnemy = await EnemyModel.findOne({ name:stageInfo.enemies});
+        enemies.push(curEnemy);
+       }
+
+      try {
+        console.log(enemies);
+        res.status(200).send({enemies});
+        break;
+      } catch (err) {
+        console.error('Error', err);
+        res.status(500).json({ message: "An error has occurred" });
+      };
+     } 
+  };
+
+})
+
 
 connect();
 
